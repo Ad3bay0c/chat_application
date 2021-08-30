@@ -3,7 +3,11 @@ package CHATAPP
 import "net"
 
 type User struct {
-	name	string
+	username	string
 	chat	*Chat
 	conn	net.Conn
+}
+
+func (user *User) readInput(s *Server) {
+
 }
