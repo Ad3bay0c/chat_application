@@ -43,6 +43,29 @@ func (s *Server) handleRequest(conn net.Conn) {
 	newUser.readInput(s)
 
 }
+
+func (s *Server) readInstruction() {
+	for v := range s.instructions {
+		switch v.command {
+		case USERNAME:
+		case JOIN:
+		case SEND:
+		case CHATS:
+		case QUIT:
+			s.quitConnection(v.user)
+		}
+	}
+}
+
+func (s *Server) quitConnection(user *User) {
+
+	if user.chat != nil {
+		user.quitGroup()
+	}
+	log.Printf("A Connection Disconnected: %s", user.conn.RemoteAddr().String())
+
+	user.conn.Close()
+}
 func checkError(err error, msg string) {
 	if err != nil {
 		log.Printf(msg)
