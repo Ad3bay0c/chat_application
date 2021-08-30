@@ -8,16 +8,16 @@ import (
 
 type Server struct {
 	chats			map[string]*Chat
-	instructions	chan Instruction
+	instructions	chan *Instruction
 }
 
 func StartServer() {
 	s := &Server{
 		chats: make(map[string]*Chat),
-		instructions: make(chan Instruction),
+		instructions: make(chan *Instruction),
 	}
 
-	listener, err := net.Listen("tcp", "3333")
+	listener, err := net.Listen("tcp", ":3333")
 	if err != nil {
 		panic(err)
 	}
