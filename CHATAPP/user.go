@@ -72,6 +72,8 @@ func (user *User) readInput(s *Server) {
 
 func (user *User) quitGroup() {
 	user.chat.broadcast(user, fmt.Sprintf("%v left the chat group", user.username))
+
+	delete(user.chat.members, user.conn.RemoteAddr())
 	user.chat = nil
 }
 
@@ -80,5 +82,5 @@ func (user *User) writeMessage(u *User, msg string) {
 }
 
 func(user *User) errorMessage(msg string) {
-	user.conn.Write([]byte("OOPS!!! An Error Occured: \n\t"+msg))
+	user.conn.Write([]byte(fmt.Sprintf("OOPS!!! An Error Occured: \n\t%v\n",msg)))
 }
