@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 type Server struct {
@@ -48,6 +49,7 @@ func (s *Server) readInstruction() {
 	for v := range s.instructions {
 		switch v.command {
 		case USERNAME:
+			s.updateUsername(v.user, v.input)
 		case JOIN:
 		case SEND:
 		case CHATS:
@@ -57,11 +59,25 @@ func (s *Server) readInstruction() {
 	}
 }
 
+func (s *Server) updateUsername(user *User, args []string) {
+	if len(args) < 2 {
+		user.writeMessage(user, fmt.Sprintf("Enter a New Username; (*username doe)"))
+		return
+	}
+	username := strings.TrimSpace(args[1])
+
+	user.username = username
+
+	user.writeMessage(user, fmt.Sprintf("Username Updated to %s", username))
+
+}
+
 func (s *Server) quitConnection(user *User) {
 
 	if user.chat != nil {
 		user.quitGroup()
 	}
+
 	log.Printf("A Connection Disconnected: %s", user.conn.RemoteAddr().String())
 
 	user.conn.Close()
