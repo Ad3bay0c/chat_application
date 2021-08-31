@@ -14,12 +14,12 @@ type User struct {
 }
 
 func (user *User) readInput(s *Server) {
-	user.writeMessage(fmt.Sprintf("Welcome to Adebayo Chat App, " +
+	user.writeMessage(user, fmt.Sprintf("Welcome to Adebayo Chat App, " +
 		"Please Update your username and continue with other operations...\n"))
 	for {
 		input, err := bufio.NewReader(user.conn).ReadString('\n')
 		if err != nil {
-			user.writeMessage(fmt.Sprintf("Error Reading strings: %v", err))
+			user.writeMessage(user, fmt.Sprintf("Error Reading strings: %v", err))
 			continue
 		}
 
@@ -70,8 +70,13 @@ func (user *User) readInput(s *Server) {
 	}
 }
 
-func (user *User) writeMessage(msg string) {
-	user.conn.Write([]byte(msg))
+func (user *User) quitGroup() {
+	user.chat.broadcast(user, fmt.Sprintf("%v left the chat group", user.username))
+	user.chat = nil
+}
+
+func (user *User) writeMessage(u *User, msg string) {
+	user.conn.Write([]byte(fmt.Sprintf("$%v: %s\n", u.username, msg)))
 }
 
 func(user *User) errorMessage(msg string) {
