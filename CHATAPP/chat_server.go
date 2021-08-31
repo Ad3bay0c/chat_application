@@ -53,7 +53,9 @@ func (s *Server) readInstruction() {
 		case JOIN:
 			s.joinGroup(v.user, v.input)
 		case SEND:
+			s.sendMessage(v.user, v.input)
 		case CHATS:
+			s.chatsList(v.user)
 		case QUIT:
 			s.quitConnection(v.user)
 		}
@@ -112,6 +114,13 @@ func (s *Server) sendMessage(user *User, args []string) {
 	user.chat.broadcast(user, msg)
 }
 
+func(s *Server) chatsList(user *User) {
+	list := make([]string, 0)
+	for name, _ := range s.chats {
+		list = append(list, name)
+	}
+	user.writeMessage(user, strings.Join(list, ", "))
+}
 func (s *Server) quitConnection(user *User) {
 
 	if user.chat != nil {
