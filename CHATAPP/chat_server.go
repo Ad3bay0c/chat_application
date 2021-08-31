@@ -18,13 +18,14 @@ func StartServer() {
 		instructions: make(chan *Instruction),
 	}
 
+	go s.readInstruction()
+
 	listener, err := net.Listen("tcp", ":3333")
 	if err != nil {
 		panic(err)
 	}
-
+	log.Printf("Server Started at localhost:3333")
 	for {
-		log.Printf("Server Started at localhost:3333")
 
 		conn, err := listener.Accept()
 		checkError(err, fmt.Sprintf("Error Accepting Request: %v", err))
@@ -64,7 +65,7 @@ func (s *Server) readInstruction() {
 
 func (s *Server) updateUsername(user *User, args []string) {
 	if len(args) < 2 {
-		user.writeMessage(user, fmt.Sprintf("Enter a New Username; (*username doe)"))
+		user.errorMessage(fmt.Sprintf("Enter a New Username; (*username doe)"))
 		return
 	}
 	username := strings.TrimSpace(args[1])
@@ -77,14 +78,14 @@ func (s *Server) updateUsername(user *User, args []string) {
 
 func (s *Server) joinGroup(user *User, args []string) {
 	if len(args) < 2 {
-		user.writeMessage(user, fmt.Sprintf("Enter a group Name to join or create new one; (*join sport)"))
+		user.errorMessage(fmt.Sprintf("Enter a group Name to join or create new one; (*join sport)"))
 		return
 	}
-	if user != nil {
+	if user.chat != nil {
 		user.quitGroup()
 	}
 
-	groupName := strings.TrimSpace(args[0])
+	groupName := strings.TrimSpace(args[1])
 
 	grp, ok := s.chats[groupName]
 
@@ -102,24 +103,33 @@ func (s *Server) joinGroup(user *User, args []string) {
 
 	user.chat.broadcast(user, fmt.Sprintf("%v joined the group", user.username))
 
-	user.writeMessage(user, fmt.Sprintf("%v welcome to the group", user.username))
+	user.writeMessage(user, fmt.Sprintf("welcome to the group %v", groupName))
 }
 
 func (s *Server) sendMessage(user *User, args []string) {
 	if len(args) < 2 {
-		user.writeMessage(user, fmt.Sprintf("Type in a message ; (*send Hi, How are you doing)"))
+		user.errorMessage(fmt.Sprintf("Type in a message ; (*send Hi, How are you doing)"))
 		return
 	}
+	if user.chat == nil {
+		user.errorMessage(fmt.Sprintf("You belong to no group, Join a group first; (*join sport)"))
+		return
+	}
+
 	msg := strings.TrimSpace(strings.Join(args[1:], " "))
 	user.chat.broadcast(user, msg)
 }
 
 func(s *Server) chatsList(user *User) {
+	if len(s.chats) == 0 {
+		user.writeMessage(user, fmt.Sprintf("Empty, create new chat group (*join sport)"))
+		return
+	}
 	list := make([]string, 0)
 	for name, _ := range s.chats {
 		list = append(list, name)
 	}
-	user.writeMessage(user, strings.Join(list, ", "))
+	user.writeMessage(user, fmt.Sprintf("Chat Groups: %s", strings.Join(list, ", ")))
 }
 func (s *Server) quitConnection(user *User) {
 
