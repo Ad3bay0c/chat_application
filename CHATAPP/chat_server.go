@@ -51,6 +51,7 @@ func (s *Server) readInstruction() {
 		case USERNAME:
 			s.updateUsername(v.user, v.input)
 		case JOIN:
+			s.joinGroup(v.user, v.input)
 		case SEND:
 		case CHATS:
 		case QUIT:
@@ -74,7 +75,7 @@ func (s *Server) updateUsername(user *User, args []string) {
 
 func (s *Server) joinGroup(user *User, args []string) {
 	if len(args) < 2 {
-		user.writeMessage(user, fmt.Sprintf("Enter a Name of the group to join or create new one; (*join sport)"))
+		user.writeMessage(user, fmt.Sprintf("Enter a group Name to join or create new one; (*join sport)"))
 		return
 	}
 	if user != nil {
@@ -101,6 +102,16 @@ func (s *Server) joinGroup(user *User, args []string) {
 
 	user.writeMessage(user, fmt.Sprintf("%v welcome to the group", user.username))
 }
+
+func (s *Server) sendMessage(user *User, args []string) {
+	if len(args) < 2 {
+		user.writeMessage(user, fmt.Sprintf("Type in a message ; (*send Hi, How are you doing)"))
+		return
+	}
+	msg := strings.TrimSpace(strings.Join(args[1:], " "))
+	user.chat.broadcast(user, msg)
+}
+
 func (s *Server) quitConnection(user *User) {
 
 	if user.chat != nil {
