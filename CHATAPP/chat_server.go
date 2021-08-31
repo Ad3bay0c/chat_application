@@ -72,6 +72,35 @@ func (s *Server) updateUsername(user *User, args []string) {
 
 }
 
+func (s *Server) joinGroup(user *User, args []string) {
+	if len(args) < 2 {
+		user.writeMessage(user, fmt.Sprintf("Enter a Name of the group to join or create new one; (*join sport)"))
+		return
+	}
+	if user != nil {
+		user.quitGroup()
+	}
+
+	groupName := strings.TrimSpace(args[0])
+
+	grp, ok := s.chats[groupName]
+
+	if !ok {
+		grp = &Chat{
+			name:    groupName,
+			members: make(map[net.Addr]*User),
+		}
+		s.chats[groupName] = grp
+	}
+
+	grp.members[user.conn.RemoteAddr()] = user
+
+	user.chat = grp
+
+	user.chat.broadcast(user, fmt.Sprintf("%v joined the group", user.username))
+
+	user.writeMessage(user, fmt.Sprintf("%v welcome to the group", user.username))
+}
 func (s *Server) quitConnection(user *User) {
 
 	if user.chat != nil {
