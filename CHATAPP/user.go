@@ -29,31 +29,31 @@ func (user *User) readInput(s *Server) {
 
 		switch command {
 		case "*username":
-			s.instructions <- &Instruction{
+			s.Instructions <- &Instruction{
 				command: USERNAME,
 				user:    user,
 				input:   args,
 			}
 		case "*join":
-			s.instructions <- &Instruction{
+			s.Instructions <- &Instruction{
 				command: JOIN,
 				user:    user,
 				input:   args,
 			}
-		case "*chats":
-			s.instructions <- &Instruction{
+		case "*Chats":
+			s.Instructions <- &Instruction{
 				command: CHATS,
 				user:    user,
 				input:   args,
 			}
 		case "*send":
-			s.instructions <- &Instruction{
+			s.Instructions <- &Instruction{
 				command: SEND,
 				user:    user,
 				input:   args,
 			}
 		case "*quit":
-			s.instructions <- &Instruction{
+			s.Instructions <- &Instruction{
 				command: QUIT,
 				user:    user,
 				input:   args,
@@ -61,8 +61,8 @@ func (user *User) readInput(s *Server) {
 		default:
 			user.errorMessage(fmt.Sprintf("invalid command; Choose from the commands below: " +
 				"\n\t *username 'your name'-> to set your username," +
-				"\n\t *chats -> to list all available chat chats," +
-				"\n\t *join 'chats'-> to join/create a chat," +
+				"\n\t *Chats -> to list all available chat Chats," +
+				"\n\t *join 'Chats'-> to join/create a chat," +
 				"\n\t *send 'message'-> send a message to a chat," +
 				"\n\t *quit -> to disconnect from a connection",
 			))
