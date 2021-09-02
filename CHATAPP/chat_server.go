@@ -8,15 +8,20 @@ import (
 )
 
 type Server struct {
-	chats			map[string]*Chat
-	instructions	chan *Instruction
+	Chats        map[string]*Chat
+	Instructions chan *Instruction
+	Users        map[net.Addr]*User
+}
+var clients = make(map[net.Addr]int)
+
+var s = &Server{
+	Chats:        make(map[string]*Chat),
+	Instructions: make(chan *Instruction),
+	Users:        make(map[net.Addr]*User),
 }
 
 func StartServer() {
-	s := &Server{
-		chats: make(map[string]*Chat),
-		instructions: make(chan *Instruction),
-	}
+
 
 	go s.readInstruction()
 
@@ -41,12 +46,16 @@ func (s *Server) handleRequest(conn net.Conn) {
 		conn: conn,
 		username: "anonymous",
 	}
+
+	s.Users[newUser.conn.RemoteAddr()] = newUser
+
+	log.Printf("Number of Users: %v", len(clients))
 	newUser.readInput(s)
 
 }
 
 func (s *Server) readInstruction() {
-	for v := range s.instructions {
+	for v := range s.Instructions {
 		switch v.command {
 		case USERNAME:
 			s.updateUsername(v.user, v.input)
@@ -86,14 +95,14 @@ func (s *Server) joinGroup(user *User, args []string) {
 
 	groupName := strings.TrimSpace(args[1])
 
-	grp, ok := s.chats[groupName]
+	grp, ok := s.Chats[groupName]
 
 	if !ok {
 		grp = &Chat{
 			name:    groupName,
 			members: make(map[net.Addr]*User),
 		}
-		s.chats[groupName] = grp
+		s.Chats[groupName] = grp
 	}
 
 	grp.members[user.conn.RemoteAddr()] = user
@@ -120,12 +129,12 @@ func (s *Server) sendMessage(user *User, args []string) {
 }
 
 func(s *Server) chatsList(user *User) {
-	if len(s.chats) == 0 {
+	if len(s.Chats) == 0 {
 		user.writeMessage(user, fmt.Sprintf("Empty, create new chat group (*join sport)"))
 		return
 	}
 	list := make([]string, 0)
-	for name, _ := range s.chats {
+	for name, _ := range s.Chats {
 		list = append(list, name)
 	}
 	user.writeMessage(user, fmt.Sprintf("Chat Groups: %s", strings.Join(list, ", ")))
@@ -137,7 +146,7 @@ func (s *Server) quitConnection(user *User) {
 	}
 
 	log.Printf("A Connection Disconnected: %s", user.conn.RemoteAddr().String())
-
+	delete(s.Users, user.conn.RemoteAddr())
 	user.conn.Close()
 }
 func checkError(err error, msg string) {
