@@ -41,7 +41,6 @@ func (s *Server) handleRequest(conn net.Conn) {
 		conn: conn,
 		username: "anonymous",
 	}
-
 	newUser.readInput(s)
 
 }
