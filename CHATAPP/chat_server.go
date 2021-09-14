@@ -45,9 +45,7 @@ func (s *Server) handleRequest(conn net.Conn) {
 
 	s.Users[newUser.conn.RemoteAddr()] = newUser
 
-
 	newUser.readInput(s)
-
 }
 
 func (s *Server) readInstruction() {
@@ -105,7 +103,7 @@ func (s *Server) joinGroup(user *User, args []string) {
 
 	user.chat = grp
 
-	user.chat.broadcast(nil, fmt.Sprintf("%v joined the group", user.username))
+	user.chat.broadcast(user, fmt.Sprintf("%v joined the group", user.username))
 
 	user.writeMessage(nil, fmt.Sprintf("welcome to the group %v", groupName))
 }
