@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-func TestServer_StartServer(t *testing.T) {
-	StartServer()
-}
-
 func TestStartServer(t *testing.T) {
 	tables := []struct{
 		word	string
