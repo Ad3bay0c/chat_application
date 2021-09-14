@@ -107,9 +107,9 @@ func (s *Server) joinGroup(user *User, args []string) {
 
 	user.chat = grp
 
-	user.chat.broadcast(user, fmt.Sprintf("%v joined the group", user.username))
+	user.chat.broadcast(nil, fmt.Sprintf("%v joined the group", user.username))
 
-	user.writeMessage(user, fmt.Sprintf("welcome to the group %v", groupName))
+	user.writeMessage(nil, fmt.Sprintf("welcome to the group %v", groupName))
 }
 
 func (s *Server) sendMessage(user *User, args []string) {
