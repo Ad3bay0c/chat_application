@@ -25,7 +25,7 @@ func (user *User) readInput(s *Server) {
 
 		input = strings.Trim(input, "\n")
 		args := strings.Split(input, " ")
-		command := strings.TrimSpace(args[0])
+		command := strings.ToLower(strings.TrimSpace(args[0]))
 
 		switch command {
 		case "*username":
@@ -40,7 +40,7 @@ func (user *User) readInput(s *Server) {
 				user:    user,
 				input:   args,
 			}
-		case "*Chats":
+		case "*chats":
 			s.Instructions <- &Instruction{
 				command: CHATS,
 				user:    user,
