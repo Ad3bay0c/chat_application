@@ -71,7 +71,7 @@ func (user *User) readInput(s *Server) {
 }
 
 func (user *User) quitGroup() {
-	user.chat.broadcast(user, fmt.Sprintf("%v left the chat group", user.username))
+	user.chat.broadcast(nil, fmt.Sprintf("%v left the chat group", user.username))
 
 	delete(user.chat.members, user.conn.RemoteAddr())
 	user.chat = nil
