@@ -10,7 +10,12 @@ type Chat struct {
 func (chat *Chat) broadcast(user *User, msg string) {
 	for userAddr, u := range chat.members {
 		if userAddr != user.conn.RemoteAddr() {
-			u.writeMessage(user, msg)
+			if user == nil {
+				u.writeMessage(nil, msg)
+			} else {
+				u.writeMessage(user, msg)
+			}
+
 		}
 	}
 }
