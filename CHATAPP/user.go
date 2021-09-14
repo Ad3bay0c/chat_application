@@ -78,7 +78,11 @@ func (user *User) quitGroup() {
 }
 
 func (user *User) writeMessage(u *User, msg string) {
-	user.conn.Write([]byte(fmt.Sprintf("$%v: %s\n", u.username, msg)))
+	if u == nil {
+		user.conn.Write([]byte(fmt.Sprintf("%s\n", msg)))
+	} else {
+		user.conn.Write([]byte(fmt.Sprintf("$%v: %s\n", u.username, msg)))
+	}
 }
 
 func(user *User) errorMessage(msg string) {
