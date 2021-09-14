@@ -15,7 +15,7 @@ type User struct {
 
 func (user *User) readInput(s *Server) {
 	user.writeMessage(user, fmt.Sprintf("Welcome to Adebayo Chat App, " +
-		"Please Update your username and continue with other operations...\n"))
+		"Please Update your username and continue with other operations..."))
 	for {
 		input, err := bufio.NewReader(user.conn).ReadString('\n')
 		if err != nil {
