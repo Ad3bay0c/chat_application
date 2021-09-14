@@ -21,8 +21,6 @@ var s = &Server{
 }
 
 func StartServer() {
-
-
 	go s.readInstruction()
 
 	listener, err := net.Listen("tcp", ":3333")
@@ -31,7 +29,6 @@ func StartServer() {
 	}
 	log.Printf("Server Started at localhost:3333")
 	for {
-
 		conn, err := listener.Accept()
 		checkError(err, fmt.Sprintf("Error Accepting Request: %v", err))
 
@@ -49,7 +46,7 @@ func (s *Server) handleRequest(conn net.Conn) {
 
 	s.Users[newUser.conn.RemoteAddr()] = newUser
 
-	log.Printf("Number of Users: %v", len(clients))
+	log.Printf("Number of Users: %v", len(s.Users))
 	newUser.readInput(s)
 
 }
