@@ -12,7 +12,6 @@ type Server struct {
 	Instructions chan *Instruction
 	Users        map[net.Addr]*User
 }
-var clients = make(map[net.Addr]int)
 
 var s = &Server{
 	Chats:        make(map[string]*Chat),
@@ -46,7 +45,6 @@ func (s *Server) handleRequest(conn net.Conn) {
 
 	s.Users[newUser.conn.RemoteAddr()] = newUser
 
-	log.Printf("Number of Users: %v", len(s.Users))
 
 	newUser.readInput(s)
 
