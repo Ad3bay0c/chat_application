@@ -11,15 +11,12 @@ func TestServer_StartServer(t *testing.T) {
 
 func TestStartServer(t *testing.T) {
 	tables := []struct{
-		output	int
 		word	string
 	}{
 		{
-			output: 1,
 			word: "First Client",
 		},
 		{
-			output: 2,
 			word: "Second Client",
 		},
 	}
