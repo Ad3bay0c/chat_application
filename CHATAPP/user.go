@@ -14,12 +14,12 @@ type User struct {
 }
 
 func (user *User) readInput(s *Server) {
-	user.writeMessage(user, fmt.Sprintf("Welcome to Adebayo Chat App, " +
+	user.writeMessage(nil, fmt.Sprintf("Welcome to Adebayo Chat App, " +
 		"Please Update your username and continue with other operations..."))
 	for {
 		input, err := bufio.NewReader(user.conn).ReadString('\n')
 		if err != nil {
-			user.writeMessage(user, fmt.Sprintf("Error Reading strings: %v", err))
+			user.writeMessage(nil, fmt.Sprintf("Error Reading strings: %v", err))
 			continue
 		}
 
