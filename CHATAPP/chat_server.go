@@ -47,6 +47,7 @@ func (s *Server) handleRequest(conn net.Conn) {
 	s.Users[newUser.conn.RemoteAddr()] = newUser
 
 	log.Printf("Number of Users: %v", len(s.Users))
+
 	newUser.readInput(s)
 
 }
